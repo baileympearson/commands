@@ -11,3 +11,5 @@ echo '' >> ~/.bashrc
 echo '# Add the /bin directory to the path' >> ~/.bashrc
 
 echo 'export PATH=$PATH:'$src_path >> ~/.bashrc
+
+source ~/.bashrc

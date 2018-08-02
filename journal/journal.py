@@ -42,7 +42,7 @@ class JournalEntry:
 		}
 	
 class Journal:
-	DB_NAME = 'journal-test'
+	DB_NAME = 'journal'
 	COLLECTION_NAME = 'entries'
 
 	def __init__(self):
