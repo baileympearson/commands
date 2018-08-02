@@ -30,10 +30,16 @@ def insert_test_data():
 		birth_date = datetime(year, month, day)
 		return birth_date
 
-	entries = [{'entry':'hello world!','date': rand_date()} for i in range(10)]
+	entries = [{'entry':'banana!','date': rand_date()} for i in range(5)]
 	return entries
 entries = insert_test_data()
 
 collection.insert_many(entries)
 
-print(list(collection.find().sort('date',pymongo.DESCENDING))[0])
+import re
+regx = re.compile("a!", re.IGNORECASE)
+
+cursor = collection.find({"entry": regx})
+
+for item in cursor:
+	print(item)

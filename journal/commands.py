@@ -1,13 +1,17 @@
 import click
 from journal import Journal
 import re
+import datetime
+
+from helpers import *
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h','--help'])
+
+from journal import Journal,JournalEntry
 
 global journal
 journal = Journal()
 
-from journal import Journal2
 
 @click.group(context_settings=CONTEXT_SETTINGS)
 def run_command():
@@ -19,15 +23,16 @@ def run_command():
 ''' Here we have the commands '''
 @run_command.command(help='Adds a new journal entry to the journal.')
 def add():
-	journal.addEntry()
-	journal.save()
+	date = datetime.datetime.now()
+	entry_text = get_entry_text()
+
+	journal.add_entry(JournalEntry(entry_text,date))
 
 @run_command.command(help='Lists all journal entries.')
 @click.option(	'--color','-c',
 				help='Enable colorized output.  Only recommended if working in a terminal string literal.',
 				is_flag=True,default=False)
 def list(color):
-	journal = Journal2()
 	entries = journal.get_all_entries()
 	if entries is None:
 		return
@@ -45,31 +50,56 @@ def list(color):
 				default=True)
 def search(regex):
 	pattern = input('Enter pattern to search for: ')
-	matches = journal.search(re.compile(pattern))
-	for item in matches:
-		print(item)
+
+	# compile the regex 
+	regex = re.compile(pattern)
+
+	matches = journal.match_entries(regex)
+
+	if matches is None:
+		return
+
+	results = map(str,matches)
+
+	print('\n\n'.join([item for item in results]))
 	
 
 @run_command.command(help='Removes a particular journal entry.')
 def delete():
-	journal.deleteEntry()
-	journal.save()
+	entries = journal.get_all_entries()
+	if entries is None:
+		return
+	
+	entry = choose_entry(entries)
+
+	if entry is None:
+		return
+
+	journal.delete_entry(entry.date)
 
 @run_command.command(help='Shows the last entry in the journal')
 def last():
-	journal = Journal2()
 	entry = journal.get_last_entry()
 	if entry is not None:
 		print(str(entry))
 
 @run_command.command(help='Deletes all journal entries. Cannot be undone.')
 def clear():
-	journal = Journal2()
 	journal.delete_all_entries()
 
 @run_command.command(help='Allows the user to edit a past journal entry.')
 @click.option('-c','--choice',help="""Edit the last entry in the journal""",
 				is_flag=True,default=True)
 def edit(choice):
-	journal.editEntry(choice)
-	journal.save()
+	entries = journal.get_all_entries()
+	if entries is None:
+		return
+	
+	entry = choose_entry(entries)
+
+	if entry is None:
+		return
+	
+	entry.entry = get_entry_text(entry.entry)
+
+	journal.update_entry(entry)
