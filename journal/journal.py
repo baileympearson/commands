@@ -15,12 +15,35 @@ import pymongo
 
 MongoClient = pymongo.MongoClient
 
+sys.path.append('/home/bailey/programming/commands/interface')
+
+from interface import Document
+
+class Journal(Document):
+	_DB_NAME =				'cli_apps'
+	_COLLECTION_NAME =		'journal'
+	_UPDATE_PARAMETER =		''
+	_QUERY_PARAMETERS =		''
+	_SORT_PARAMETER =		'date'
+
+	date = datetime.datetime.now() 
+	entry = ''
+
+	def __str__(self):
+		tmp_date = self.date.strftime("%B %d, %Y")
+		coloredDate = colored(str(tmp_date),'red',attrs=[])
+		return coloredDate + "\n" + self.entry
+	
+
 ''' 
 TODO
 	1. add a feature to allow the user to edit a past journal entry
 	2. allow for accessing an entry by date
 	3. allow user to set filename and location
 	4. add password support
+
+	my_datetime.strftime("%B %d, %Y")
+  
 '''
 class JournalEntry:
 	def __init__(self,entry,date=datetime.datetime.now()):
@@ -28,7 +51,8 @@ class JournalEntry:
 		self.date = date
 	
 	def __str__(self):
-		coloredDate = colored(str(self.date),'red',attrs=[])
+		tmp_date = self.date.strftime("%B %d, %Y")
+		coloredDate = colored(str(tmp_date),'red',attrs=[])
 		return coloredDate + "\n" + self.entry
 	
 	@classmethod
@@ -41,6 +65,7 @@ class JournalEntry:
 			'date' : self.date
 		}
 	
+"""	
 class Journal:
 	DB_NAME = 'journal'
 	COLLECTION_NAME = 'entries'
@@ -53,14 +78,9 @@ class Journal:
 	def add_entry(self,entry):
 		''' 
 		adds the specified entry into the database 
-			entry: an instance of the JournalEntry class
+			@param entry: an instance of the JournalEntry class
 		'''
 
-		''' we don't even need to check if the entry
-			exists in the database, since the db query
-			includes a upsert=true field, which inserts
-			the document if it does not exist '''
-		
 		# check if the entry exists in the database 
 		res = self.collection.find_one({'date':entry.date})
 
@@ -70,6 +90,11 @@ class Journal:
 			self.collection.insert(entry.to_dict())
 	
 	def match_entries(self,regex):
+		'''
+			returns a list of all JournalEntry entries that match the pattern regex
+			if none exist, it returns None
+				@param regex: a compiled regular expression pattern
+		'''
 		cursor = self.collection.find({'entry': regex})
 
 		if cursor.count() > 0:
@@ -78,14 +103,20 @@ class Journal:
 		return None
 	
 	def update_entry(self,entry):
+		'''
+			Updates a particular entry in the journal.
+		'''
 		self.collection.update_one({'date':entry.date},{'$set': {'entry': entry.entry}},upsert=True)
 
 	def delete_entry(self,date):
-		''' Removes the entry with the particular date, if it exists. Else it does nothing '''
+		''' 
+			Removes the entry with the particular date, if it exists. Otherwise
+			it does nothing.
+		'''
 		self.collection.delete_one({'date': date})
 	
 	def delete_all_entries(self):
-		''' Clears the database. '''
+		''' Removes all entries from the database. '''
 		self.db.drop_collection(self.COLLECTION_NAME)
 	
 	def get_last_entry(self):
@@ -97,9 +128,17 @@ class Journal:
 		return None
 		
 	def get_all_entries(self):
-		''' Returns a list of all entries in the database ''' 
+		''' 
+			Returns a list of all entries in the database 
+			If no entries exist, returns None.
+		''' 
 		cursor = self.collection.find()
 		if cursor.count() > 0:
 			return [JournalEntry.init_from_dict(item) for item in cursor]
 		return None
+	
+	def get_count(self):
+		cursor = self.collection.find()
+		return cursor.count()
 
+	"""	

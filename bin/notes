@@ -2,9 +2,9 @@
 import click
 import sys
 
-sys.path.append('/home/bailey/programming/commands/journal')
+sys.path.append('/dotfiles/dotfiles/commands/notes')
 
-from journal import Journal
+from notes import Notes
 import commands
 
 
