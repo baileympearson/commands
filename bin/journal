@@ -1,8 +1,14 @@
 #!/usr/bin/env python3
 import click
 import sys
+import os
 
-sys.path.append('/home/bailey/programming/commands/journal')
+cur_file = sys.argv[0]
+pathname = os.path.dirname(cur_file)
+filepath = os.path.abspath(pathname)
+
+sys.path.append(os.path.abspath(filepath[:-4] + "/journal"))
+sys.path.append(os.path.abspath(filepath[:-4] + "/interface"))
 
 from journal import Journal
 import commands

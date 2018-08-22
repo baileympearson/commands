@@ -15,9 +15,10 @@ import pymongo
 
 MongoClient = pymongo.MongoClient
 
-sys.path.append('/dotfiles/dotfiles/commands/interface')
+
 
 from interface import Document
+
 
 class Notes(Document):
 	_DB_NAME =				'cli_apps'
@@ -46,6 +47,7 @@ class Notes(Document):
 
 
 	def __str__(self):
+		print(sys.path)
 		tmp_date = self.date.strftime("%B %d, %Y")
 		coloredSubject = colored(self.subject,'blue',attrs=['bold'])
 		coloredDate = colored(str(tmp_date),'red',attrs=[])

@@ -15,7 +15,6 @@ import pymongo
 
 MongoClient = pymongo.MongoClient
 
-sys.path.append('/home/bailey/programming/commands/interface')
 
 from interface import Document
 
