@@ -24,7 +24,7 @@ def chooseClass(classes):
 	for subject in classes:
 		print('%d: %s' % (i, subject))
 		i += 1
-	choice = input('Choose subject')
+	choice = input('Choose subject: ')
 	
 	choice = int(choice.strip())
 
@@ -45,13 +45,11 @@ def add():
 
 	entry_text = get_entry_text()
 
-	notes2 = Notes(subject)
+	notes.date = date
+	notes.entry = entry_text
+	notes.subject = subject
 
-	notes2.date = date
-	notes2.entry = entry_text
-	notes2.subject = subject
-
-	notes2.save()
+	notes.save()
 
 @run_command.command(help='Lists all notes entries.')
 @click.option(	'--color','-c',
@@ -60,8 +58,8 @@ def add():
 def list(color):
 	entries = notes.all()
 	# entries = notes.get_all_entries()
-	if entries is None:
-		return
+	if entries == []:
+		exit()
 
 	# map the str() function onto the entries list
 	tmp = map(str,entries)

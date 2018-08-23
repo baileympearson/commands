@@ -32,14 +32,10 @@ class Notes(Document):
 		'Web_dev',
 		'Network_Security',
 		'CS_Seminar',
-		'SC_Toolbox'
+		'SC_Toolbox',
+		'software_design'
 	]
 
-	def __init__(self,course=None):
-		if course is not None:
-			self._COLLECTION_NAME = course + "_notes"
-
-		super().__init__()
 
 	date = datetime.datetime.now() 
 	entry = ''
@@ -47,7 +43,6 @@ class Notes(Document):
 
 
 	def __str__(self):
-		print(sys.path)
 		tmp_date = self.date.strftime("%B %d, %Y")
 		coloredSubject = colored(self.subject,'blue',attrs=['bold'])
 		coloredDate = colored(str(tmp_date),'red',attrs=[])

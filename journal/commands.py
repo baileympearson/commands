@@ -36,8 +36,7 @@ def add():
 				is_flag=True,default=False)
 def list(color):
 	entries = journal.all()
-	# entries = journal.get_all_entries()
-	if entries is None:
+	if entries == []:
 		return
 
 	# map the str() function onto the entries list

@@ -138,29 +138,38 @@ class Document(ABC):
 		self._db = self._client[self._DB_NAME]
 		self._collection = self._db[self._COLLECTION_NAME]
 
-		self.id = self._MAX_ID
+		self._MAX_ID = self.get_max_id()
 		self._MAX_ID += 1
+		self.id = self._MAX_ID
+	
+	def get_max_id(self):
+		cursor = self._collection.find().sort('id',pymongo.DESCENDING)
+		l = list(cursor)
+
+		if l == []:
+			return 0
+
+		max_id = l[0]['id']
+		return int(max_id)
 	
 	def get_properties(self):
 		''' Gets the fields that the user wants to store in the databse. '''
+
 
 		# gets all fields that are not 
 		res = inspect.getmembers(self, lambda item : not inspect.isroutine(item))
 		res = {a[0]: a[1] for a in res if not((a[0].startswith('__') and a[0].endswith('__')) or 
 						a[0].startswith('_') or a[0] == 'objects')}
+
 		return res
 
 	def save(self):
 		''' Saves the current object into the database.
 			If the object already exists in the database, it updates
-			the current object.  Else, it adds the object into the database.
+			the current object.  Else, it adds the object 
+			into the database.
 		'''
 		properties = self.get_properties()
-
-		# self.collection.update_one({'date':entry.date},{'$set': {'entry': entry.entry}},upsert=True)
-
 		self._collection.update_one({'id':properties['id']},
 									{'$set':properties},
 									upsert=True)
-
-
