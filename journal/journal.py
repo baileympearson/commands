@@ -19,6 +19,8 @@ MongoClient = pymongo.MongoClient
 from interface import Document
 
 class Journal(Document):
+
+	# override the necessary parameters
 	_DB_NAME =				'cli_apps'
 	_COLLECTION_NAME =		'journal'
 	_UPDATE_PARAMETER =		''
@@ -29,6 +31,7 @@ class Journal(Document):
 	entry = ''
 
 	def __str__(self):
+		''' Custom formatting to allow the entry to print itself '''
 		tmp_date = self.date.strftime("%B %d, %Y")
 		coloredDate = colored(str(tmp_date),'red',attrs=[])
 		return coloredDate + "\n" + self.entry

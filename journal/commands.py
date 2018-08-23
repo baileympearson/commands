@@ -22,12 +22,19 @@ def run_command():
 ''' Here we have the commands '''
 @run_command.command(help='Adds a new journal entry to the journal.')
 def add():
+	''' Command to add a new entry to the database 
+			
+		NOTE: as of now, multiple entries are allowed for the same day
+			I plan to fix this eventually
+	'''
 	date = datetime.datetime.now()
 	entry_text = get_entry_text()
 
+	# set the journal information
 	journal.date = date
 	journal.entry = entry_text
 
+	# write the journal to the database
 	journal.save()
 
 @run_command.command(help='Lists all journal entries.')
@@ -39,10 +46,9 @@ def list(color):
 	if entries == []:
 		return
 
-	# map the str() function onto the entries list
+	# is it necessary to use a map to print a list? no.
+	# is it more fun? yes
 	tmp = map(str,entries)
-
-	# print results seperated by two newlines
 	print('\n\n'.join([item for item in tmp]))
 
 @run_command.command(help='Searches for a valid journal entry.')
@@ -51,6 +57,7 @@ def list(color):
 				is_flag=True,
 				default=True)
 def search(regex):
+	# NOTE This function is NOT working yet
 	pattern = input('Enter pattern to search for: ')
 
 	# compile the regex 
